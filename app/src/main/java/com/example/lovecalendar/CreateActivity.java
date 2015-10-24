@@ -59,10 +59,10 @@ public class CreateActivity extends AppCompatActivity {
 
     private String getDateString;
     private Date getDate;
-    private int year,month,day,hour,minute;
-    private String[] typeStrings={"普通记事","倒数日","纪念日"};
-    private int typeNum=0;
-    private boolean isRingOpen=false;
+    private int year, month, day, hour, minute;
+    private String[] typeStrings = {"普通记事", "倒数日", "纪念日"};
+    private int typeNum = 0;
+    private boolean isRingOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +71,43 @@ public class CreateActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Bundle bundle = getIntent().getExtras();
+
+        Note note = (Note) bundle.getSerializable("note");
+        if (note != null) {
+            create_title_textview.setText(note.getTitle());
+            create_note_textview.setText(note.getContent());
+            switch (note.getType()) {
+                case 1:
+                    create_type_textview.setText("普通记事");
+                    typeNum = 1;
+                    break;
+                case 2:
+                    create_type_textview.setText("倒数日");
+                    typeNum = 2;
+                    break;
+                case 3:
+                    create_type_textview.setText("纪念日");
+                    typeNum = 3;
+                    break;
+                default:
+                    break;
+            }
+            if (note.getIsOpen() == 1) {
+                isRingOpen = true;
+                create_open.setChecked(true);
+            } else {
+                isRingOpen = false;
+                create_open.setChecked(false);
+            }
+            hour = note.getHour();
+            minute = note.getMinute();
+            create_ring_textview.setText("您选择了：" + hour + "时" + minute + "分的闹钟");
+        }
+
         getDateString = bundle.getString("date");
-        year = Integer.parseInt(getDateString.substring(0,
-                getDateString.indexOf("-")));
-        month = Integer.parseInt(getDateString.substring(
-                getDateString.indexOf("-") + 1,
-                getDateString.lastIndexOf("-")));
-        day = Integer.parseInt(getDateString.substring(
-                getDateString.lastIndexOf("-") + 1, getDateString.length()));
+        year = Integer.parseInt(getDateString.substring(0, getDateString.indexOf("-")));
+        month = Integer.parseInt(getDateString.substring(getDateString.indexOf("-") + 1, getDateString.lastIndexOf("-")));
+        day = Integer.parseInt(getDateString.substring(getDateString.lastIndexOf("-") + 1, getDateString.length()));
 
         create_toolbar_title.setText(year + "-" + month + "-" + day);
         setSupportActionBar(create_toolbar);
@@ -88,7 +117,7 @@ public class CreateActivity extends AppCompatActivity {
                 if (isChecked) {  //Switch状态为开
                     if (create_ring_textview.getText().equals("")) {
                         ToastUtils.showShort(CreateActivity.this, "请先设置闹钟");
-                        isRingOpen=false;
+                        isRingOpen = false;
                         create_open.setChecked(false);
                     } else {
                         isRingOpen = true;
@@ -110,7 +139,7 @@ public class CreateActivity extends AppCompatActivity {
                 if (builder.message.getText().toString().equals("")) {
                     ToastUtils.showShort(CreateActivity.this, "请输入内容");
                 } else {
-                    ToastUtils.showShort(CreateActivity.this, builder.message.getText());
+//                    ToastUtils.showShort(CreateActivity.this, builder.message.getText());
                     create_title_textview.setText(builder.message.getText());
                     dialog.dismiss();
                 }
@@ -145,9 +174,9 @@ public class CreateActivity extends AppCompatActivity {
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker tp, int HourOfDay, int Minute) {
-                        create_ring_textview.setText("您选择了：" + HourOfDay + "时" + Minute + "分的闹钟");
                         hour = HourOfDay;
                         minute = Minute;
+                        create_ring_textview.setText("您选择了：" + hour + "时" + minute + "分的闹钟");
                     }
                 }
                 //设置初始时间
@@ -212,20 +241,20 @@ public class CreateActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_create_save) {
-            if(create_title_textview.getText().equals("")){
-                ToastUtils.showShort(CreateActivity.this,"请填写标题");
-            }else if(create_note_textview.getText().equals("")){
-                ToastUtils.showShort(CreateActivity.this,"请填写内容");
-            }else if (typeNum==0){
-                ToastUtils.showShort(CreateActivity.this,"请选择笔记类型");
-            }else{
+            if (create_title_textview.getText().equals("")) {
+                ToastUtils.showShort(CreateActivity.this, "请填写标题");
+            } else if (create_note_textview.getText().equals("")) {
+                ToastUtils.showShort(CreateActivity.this, "请填写内容");
+            } else if (typeNum == 0) {
+                ToastUtils.showShort(CreateActivity.this, "请选择笔记类型");
+            } else {
                 QueryBuilder qb = new QueryBuilder(Note.class)
                         .columns(new String[]{"_id"})
                         .where("title = ?", new String[]{create_title_textview.getText().toString()});
                 long count = App.sDb.queryCount(qb);
-                if(count>0){
-                    ToastUtils.showShort(CreateActivity.this,"标题与现存数据重复，请重新命名标题");
-                }else {
+                if (count > 0) {
+                    ToastUtils.showShort(CreateActivity.this, "标题与现存数据重复，请重新命名标题");
+                } else {
 
                     Note note = new Note();
                     note.setTitle(create_title_textview.getText().toString());
@@ -235,8 +264,13 @@ public class CreateActivity extends AppCompatActivity {
                     note.setDay(day);
                     note.setType(typeNum);
                     if (isRingOpen) {
+                        note.setIsOpen(1);
                         note.setHour(hour);
                         note.setMinute(minute);
+                    } else {
+                        note.setIsOpen(0);
+                        note.setHour(0);
+                        note.setMinute(0);
                     }
                     App.sDb.insert(note);
                     finish();

@@ -2,6 +2,7 @@ package com.example.lovecalendar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -60,7 +61,14 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
 
     @Override
     public void onItemClick(View view, int position, Note note) {
-        ToastUtils.showShort(NormalActivity.this, note.toString());
+//        ToastUtils.showShort(NormalActivity.this, note.toString());
+        String sendDate = note.getYear() + "-" + note.getMonth() + "-" + note.getDay();
+        Intent intent=new Intent(NormalActivity.this,CreateActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("note", note);
+        bundle.putString("date",sendDate);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     @Override

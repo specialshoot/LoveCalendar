@@ -4,6 +4,7 @@ import com.litesuits.orm.db.annotation.Column;
 import com.litesuits.orm.db.annotation.NotNull;
 import com.litesuits.orm.db.annotation.Table;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  * Created by 轾 on 2015/10/23.
  */
 @Table("lovetable")
-public class Note extends Soul {
+public class Note extends Soul implements Serializable {
     @NotNull @Column("title")
     private String title;
     @NotNull @Column("content")

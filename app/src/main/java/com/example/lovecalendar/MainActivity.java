@@ -1,5 +1,6 @@
 package com.example.lovecalendar;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.lovecalendar.Utils.ToastUtils;
@@ -31,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
     @Bind(R.id.window_calendar)
     KCalendar window_calendar;
@@ -56,7 +58,15 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         month = Calendar.getInstance().get(Calendar.MONTH) + 1;
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
-        date = year + "-" + month + "-" + day;
+        if (month < 10 && day < 10) {
+            date = year + "-0" + month + "-0" + day;
+        } else if (month < 10 && day >= 10) {
+            date = year + "-0" + month + "-" + day;
+        } else if (month >= 10 && day < 10) {
+            date = year + "-" + month + "-0" + day;
+        } else {
+            date = year + "-" + month + "-" + day;
+        }
         if (null != date) {
 
             int years = Integer.parseInt(date.substring(0, date.indexOf("-")));
@@ -183,11 +193,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
     @OnClick(R.id.createNote)
-    void createNote(){
+    void createNote() {
         String sendDate = year + "-" + month + "-" + day;
-        Intent intent=new Intent(MainActivity.this,CreateActivity.class);
-        Bundle bundle=new Bundle();
-        bundle.putString("date",sendDate);
+        Intent intent = new Intent(MainActivity.this, CreateActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("date", sendDate);
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -212,7 +222,15 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             year = Calendar.getInstance().get(Calendar.YEAR);
             month = Calendar.getInstance().get(Calendar.MONTH) + 1;
             day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-            date = year + "-" + month + "-" + day;
+            if (month < 10 && day < 10) {
+                date = year + "-0" + month + "-0" + day;
+            } else if (month < 10 && day >= 10) {
+                date = year + "-0" + month + "-" + day;
+            } else if (month >= 10 && day < 10) {
+                date = year + "-" + month + "-0" + day;
+            } else {
+                date = year + "-" + month + "-" + day;
+            }
             if (null != date) {
 
                 int years = Integer.parseInt(date.substring(0, date.indexOf("-")));
@@ -225,7 +243,45 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             return true;
         }
 
+        if (id == R.id.action_date) {
+            DatePickerDialog dlg = new DatePickerDialog(this, this, year, month - 1, day);
+            dlg.show();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int yearOfToday, int monthOfYear, int dayOfMonth) {
+
+        if (year == yearOfToday && month == monthOfYear + 1 && day == dayOfMonth) {
+            //Toast.makeText(TodayActivity.this, "时间选择没有改变", Toast.LENGTH_SHORT).show();
+            System.out.println("时间选择没有改变");
+        } else {
+            window_calendar.removeAllBgColor();
+            year = yearOfToday;
+            month = monthOfYear + 1;
+            day = dayOfMonth;
+            if (month < 10 && day < 10) {
+                date = year + "-0" + month + "-0" + day;
+            } else if (month < 10 && day >= 10) {
+                date = year + "-0" + month + "-" + day;
+            } else if (month >= 10 && day < 10) {
+                date = year + "-" + month + "-0" + day;
+            } else {
+                date = year + "-" + month + "-" + day;
+            }
+            if (null != date) {
+                int years = Integer.parseInt(date.substring(0, date.indexOf("-")));
+                int month = Integer.parseInt(date.substring(date.indexOf("-") + 1, date.lastIndexOf("-")));
+                toolbar.setTitle(years + " 年 " + month + " 月");
+                setSupportActionBar(toolbar);
+                window_calendar.showCalendar(years, month);
+                window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+            }
+        }
+
     }
 
     @Override
@@ -240,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         Timer tExit = null;
         if (isExit == false) {
             isExit = true;
-            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort(MainActivity.this, "再按一次退出程序");
             tExit = new Timer();
             tExit.schedule(new TimerTask() {
                 @Override

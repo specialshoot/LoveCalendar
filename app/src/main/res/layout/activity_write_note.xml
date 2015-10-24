@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    tools:context="com.example.lovecalendar.WriteNoteActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/write_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/evernote_green"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <ImageView
+                android:id="@+id/write_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_revert"/>
+
+            <TextView
+                android:id="@+id/write_toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="38dp"
+                android:text="正文"
+                android:textSize="22dp"
+                android:textColor="@color/evernote_title"/>
+        </android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:src="@color/meizu_grey"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_write_note" />
+
+</android.support.design.widget.CoordinatorLayout>

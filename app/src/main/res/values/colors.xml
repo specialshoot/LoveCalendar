@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#00000000</color>
+    <color name="main_blue_dark_transparent">#6630459E</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="meizu_red">#e95345</color>
+    <color name="meizu_red_transparent">#88e95345</color>
+    <color name="meizu_grey">#636363</color>
+    <color name="meizu_newwhite">#fafafa</color>
+
+    <color name="evernote_green">#fafae2</color>
+    <color name="evernote_title">#50514b</color>
+    <color name="md_green_200">#72d572</color>
+    <color name="md_teal_900">#004d40</color>
+</resources>

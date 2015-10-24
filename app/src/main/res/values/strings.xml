@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">记事</string>
+    <string name="action_settings">设置</string>
+    <string name="action_today">返回今日</string>
+    <string name="title_activity_note">NoteActivity</string>
+    <string name="title_activity_create">CreateActivity</string>
+
+    <!--create-->
+    <string name="create_title">请输入标题</string>
+    <string name="create_note">添加正文</string>
+    <string name="create_ring">设置提醒时间</string>
+    <string name="create_open">开启提醒闹钟？</string>
+    <string name="create_type">类型</string>
+    <string name="title_activity_write_note">WriteNoteActivity</string>
+    <string name="action_save">保存</string>
+    <string name="title_activity_view">ViewActivity</string>
+</resources>

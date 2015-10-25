@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.lovecalendar.R;
+import com.example.lovecalendar.Utils.LunarUtils.CalendarUtil;
 import com.example.lovecalendar.model.Note;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -81,14 +83,44 @@ public class MemorialRecyclerViewAdapter extends RecyclerView.Adapter<MemorialRe
             String dateString = year + "-" + month + "-" + day;
             DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
             Date date = fmt.parse(dateString);
-            holder.NumberTextView.setText(mDatas.get(position).getTitle());
+            System.out.println("dateString : "+dateString);
+            Calendar tempCalendar=Calendar.getInstance();
+            int nowYear= tempCalendar.get(Calendar.YEAR);
+            int nowMonth=tempCalendar.get(Calendar.MONTH)+1;
+            int nowDay=tempCalendar.get(Calendar.DAY_OF_MONTH);
+            String nowString= nowYear + "-" + nowMonth + "-" + nowDay;
+            System.out.println("nowString : "+nowString);
+            holder.NumberTextView.setText(getDistanceDays(dateString,nowString)+"");
             holder.TitleTextView.setText("距离" + mDatas.get(position).getYear() + "/" + mDatas.get(position).getMonth() + "/" + mDatas.get(position).getDay() + "日," + mDatas.get(position).getTitle());
             holder.viewNote = mDatas.get(position);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
+    public static long getDistanceDays(String str1, String str2) throws Exception {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date one;
+        Date two;
+        long days = 0;
+        try {
+            one = df.parse(str1);
+            two = df.parse(str2);
+            long time1 = one.getTime();
+            long time2 = two.getTime();
+            long diff;
+            if (time1 < time2) {
+                diff = time2 - time1;
+            } else {
+                diff = time1 - time2;
+            }
+            days = diff / (1000 * 60 * 60 * 24);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return days;
+    }
+
 
     @Override
     public int getItemCount() {

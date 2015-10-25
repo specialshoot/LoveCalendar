@@ -51,7 +51,7 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
                 .appendOrderDescBy("year")
                 .appendOrderDescBy("month")
                 .appendOrderDescBy("day")
-                .where("type = ?",new String[]{"2"});
+                .where("type = ?",new String[]{"3"});
 
         ArrayList<Note> temp = App.sDb.query(query);
         System.out.println("有" + temp.size() + "条数据");
@@ -132,7 +132,7 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
                 .appendOrderDescBy("year")
                 .appendOrderDescBy("month")
                 .appendOrderDescBy("day")
-                .where("type = ?",new String[]{"2"});
+                .where("type = ?",new String[]{"3"});
         ArrayList<Note> temp = App.sDb.query(query);
         System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();

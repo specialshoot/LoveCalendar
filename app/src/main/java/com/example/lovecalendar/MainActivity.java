@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             case 1:
                 break;
             case 2:
+                Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
+                startActivity(intentMemorial);
                 break;
             default:
                 break;

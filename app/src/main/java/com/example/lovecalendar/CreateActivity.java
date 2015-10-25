@@ -26,6 +26,7 @@ import com.example.lovecalendar.Utils.ToastUtils;
 import com.example.lovecalendar.model.Note;
 import com.example.lovecalendar.view.CustomDialog;
 import com.litesuits.orm.db.assit.QueryBuilder;
+import com.litesuits.orm.db.model.ConflictAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,12 +58,16 @@ public class CreateActivity extends AppCompatActivity {
     @Bind(R.id.create_toolbar_title)
     TextView create_toolbar_title;
 
+    public static final String CREATE = "create";
     private String getDateString;
     private Date getDate;
     private int year, month, day, hour, minute;
     private String[] typeStrings = {"普通记事", "倒数日", "纪念日"};
     private int typeNum = 0;
     private boolean isRingOpen = false;
+    private boolean isModifyMode = false;
+    private long haveId;
+    private Note haveNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +77,11 @@ public class CreateActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        Note note = (Note) bundle.getSerializable("note");
-        if (note != null) {
-            create_title_textview.setText(note.getTitle());
-            create_note_textview.setText(note.getContent());
-            switch (note.getType()) {
+        haveNote = (Note) bundle.getSerializable("note");
+        if (haveNote != null) {
+            create_title_textview.setText(haveNote.getTitle());
+            create_note_textview.setText(haveNote.getContent());
+            switch (haveNote.getType()) {
                 case 1:
                     create_type_textview.setText("普通记事");
                     typeNum = 1;
@@ -92,16 +97,19 @@ public class CreateActivity extends AppCompatActivity {
                 default:
                     break;
             }
-            if (note.getIsOpen() == 1) {
+            if (haveNote.getIsOpen() == 1) {
                 isRingOpen = true;
                 create_open.setChecked(true);
             } else {
                 isRingOpen = false;
                 create_open.setChecked(false);
             }
-            hour = note.getHour();
-            minute = note.getMinute();
+            hour = haveNote.getHour();
+            minute = haveNote.getMinute();
             create_ring_textview.setText("您选择了：" + hour + "时" + minute + "分的闹钟");
+            isModifyMode = true;
+//            haveId=haveNote.getId();
+//            System.out.println("ID : "+haveId);
         }
 
         getDateString = bundle.getString("date");
@@ -205,24 +213,45 @@ public class CreateActivity extends AppCompatActivity {
 
     @OnClick(R.id.create_image_back)
     void createBack() {
-        new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
+        if(isModifyMode){
+            new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
-                .setMessage("确认放弃记事？")//设置显示的内容
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
-                        // TODO Auto-generated method stub
-                        finish();
-                    }
+                    .setMessage("确认放弃修改？")//设置显示的内容
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+                            // TODO Auto-generated method stub
+                            finish();
+                        }
 
-                }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
+                    }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {//响应事件
-                // TODO Auto-generated method stub
-                Log.i("alertdialog", " 请保存数据！");
-            }
-        }).show();//在按键响应事件中显示此对话框
+                @Override
+                public void onClick(DialogInterface dialog, int which) {//响应事件
+                    // TODO Auto-generated method stub
+                    Log.i("alertdialog", " 请保存数据！");
+                }
+            }).show();//在按键响应事件中显示此对话框
+        }else {
+            new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
+
+                    .setMessage("确认放弃记事？")//设置显示的内容
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+                            // TODO Auto-generated method stub
+                            finish();
+                        }
+
+                    }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {//响应事件
+                    // TODO Auto-generated method stub
+                    Log.i("alertdialog", " 请保存数据！");
+                }
+            }).show();//在按键响应事件中显示此对话框
+        }
     }
 
     @Override
@@ -241,6 +270,7 @@ public class CreateActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_create_save) {
+
             if (create_title_textview.getText().equals("")) {
                 ToastUtils.showShort(CreateActivity.this, "请填写标题");
             } else if (create_note_textview.getText().equals("")) {
@@ -252,11 +282,17 @@ public class CreateActivity extends AppCompatActivity {
                         .columns(new String[]{"_id"})
                         .where("title = ?", new String[]{create_title_textview.getText().toString()});
                 long count = App.sDb.queryCount(qb);
-                if (count > 0) {
+                System.out.println("count : " + count);
+                if (count > 0 && !isModifyMode) {
                     ToastUtils.showShort(CreateActivity.this, "标题与现存数据重复，请重新命名标题");
                 } else {
-
                     Note note = new Note();
+                    if (isModifyMode) {
+                        note = haveNote;
+                    }
+//                    if (isModifyMode) {
+//                        note.setId(haveId);
+//                    }
                     note.setTitle(create_title_textview.getText().toString());
                     note.setContent(create_note_textview.getText().toString());
                     note.setYear(year);
@@ -269,10 +305,15 @@ public class CreateActivity extends AppCompatActivity {
                         note.setMinute(minute);
                     } else {
                         note.setIsOpen(0);
-                        note.setHour(0);
-                        note.setMinute(0);
                     }
-                    App.sDb.insert(note);
+                    if (isModifyMode) {
+                        App.sDb.update(note, ConflictAlgorithm.Fail);
+                        Intent intent = new Intent();
+                        intent.putExtra(CREATE, "ok");
+                        setResult(RESULT_OK, intent);
+                    } else {
+                        App.sDb.insert(note);
+                    }
                     finish();
                 }
             }
@@ -296,24 +337,45 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
+            if(isModifyMode){
+                new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
-                    .setMessage("确认放弃记事？")//设置显示的内容
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
-                            // TODO Auto-generated method stub
-                            finish();
-                        }
+                        .setMessage("确认放弃修改？")//设置显示的内容
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+                                // TODO Auto-generated method stub
+                                finish();
+                            }
 
-                    }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
+                        }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {//响应事件
-                    // TODO Auto-generated method stub
-                    Log.i("alertdialog", " 请保存数据！");
-                }
-            }).show();//在按键响应事件中显示此对话框
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {//响应事件
+                        // TODO Auto-generated method stub
+                        Log.i("alertdialog", " 请保存数据！");
+                    }
+                }).show();//在按键响应事件中显示此对话框
+            }else {
+                new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
+
+                        .setMessage("确认放弃记事？")//设置显示的内容
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+                                // TODO Auto-generated method stub
+                                finish();
+                            }
+
+                        }).setNegativeButton("返回", new DialogInterface.OnClickListener() {//添加返回按钮
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {//响应事件
+                        // TODO Auto-generated method stub
+                        Log.i("alertdialog", " 请保存数据！");
+                    }
+                }).show();//在按键响应事件中显示此对话框
+            }
         }
         return false;
     }

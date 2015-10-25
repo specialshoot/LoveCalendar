@@ -12,9 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
-import com.example.lovecalendar.Utils.SnackbarUtil;
-import com.example.lovecalendar.Utils.ToastUtils;
+import com.example.lovecalendar.adapter.MemorialRecyclerViewAdapter;
 import com.example.lovecalendar.adapter.MyRecyclerViewAdapter;
 import com.example.lovecalendar.model.Note;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -26,23 +26,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NormalActivity extends AppCompatActivity implements MyRecyclerViewAdapter.OnItemClickListener {
+public class MemorialActivity extends AppCompatActivity implements MemorialRecyclerViewAdapter.OnItemClickListener {
 
-    @Bind(R.id.normal_toolbar)
+    @Bind(R.id.memorial_toolbar)
     Toolbar toolbar;
-    @Bind(R.id.rv_normal)
+    @Bind(R.id.memorial_title)
+    TextView memorial_title;
+    @Bind(R.id.rv_memorial)
     RecyclerView mRecyclerView;
 
-    private MyRecyclerViewAdapter mRecyclerViewAdapter;
+    private static final int REQUEST=3;
+    private MemorialRecyclerViewAdapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<Note> mNoteList = new ArrayList<Note>();
     private static final String[] operationStrings={"删除"};
-    private static final int REQUEST=2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_normal);
+        setContentView(R.layout.activity_memorial);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
@@ -50,12 +51,13 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
                 .appendOrderDescBy("year")
                 .appendOrderDescBy("month")
                 .appendOrderDescBy("day")
-                .where("type = ?",new String[]{"1"});
+                .where("type = ?",new String[]{"2"});
+
         ArrayList<Note> temp = App.sDb.query(query);
         System.out.println("有" + temp.size() + "条数据");
 
-        mLayoutManager = new LinearLayoutManager(NormalActivity.this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerViewAdapter = new MyRecyclerViewAdapter(NormalActivity.this);
+        mLayoutManager = new LinearLayoutManager(MemorialActivity.this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerViewAdapter = new MemorialRecyclerViewAdapter(MemorialActivity.this);
         mRecyclerViewAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -66,9 +68,8 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
 
     @Override
     public void onItemClick(View view, int position, Note note) {
-//        ToastUtils.showShort(NormalActivity.this, note.toString());
         String sendDate = note.getYear() + "-" + note.getMonth() + "-" + note.getDay();
-        Intent intent=new Intent(NormalActivity.this,CreateActivity.class);
+        Intent intent=new Intent(MemorialActivity.this,CreateActivity.class);
         Bundle bundle=new Bundle();
         bundle.putSerializable("note", note);
         bundle.putString("date", sendDate);
@@ -81,7 +82,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
-        if (requestCode == NormalActivity.REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == MemorialActivity.REQUEST && resultCode == RESULT_OK) {
             System.out.println("onActivityResult");
             resetNote();
         }
@@ -96,7 +97,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        new AlertDialog.Builder(NormalActivity.this).setTitle("系统提示")
+                        new AlertDialog.Builder(MemorialActivity.this).setTitle("系统提示")
 
                                 .setMessage("确认删除？")//设置显示的内容
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
@@ -127,7 +128,11 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
     }
 
     public void resetNote() {
-        QueryBuilder query = new QueryBuilder(Note.class).appendOrderDescBy("year").appendOrderDescBy("month").appendOrderDescBy("day");
+        QueryBuilder query = new QueryBuilder(Note.class)
+                .appendOrderDescBy("year")
+                .appendOrderDescBy("month")
+                .appendOrderDescBy("day")
+                .where("type = ?",new String[]{"2"});
         ArrayList<Note> temp = App.sDb.query(query);
         System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();
@@ -135,8 +140,8 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    @OnClick(R.id.normal_back)
-    void NormalBack() {
+    @OnClick(R.id.memorial_back)
+    void MemorialBack() {
         finish();
     }
 }

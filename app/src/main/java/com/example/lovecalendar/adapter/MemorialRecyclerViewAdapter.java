@@ -1,18 +1,17 @@
 package com.example.lovecalendar.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.lovecalendar.R;
-import com.example.lovecalendar.Utils.ToastUtils;
 import com.example.lovecalendar.model.Note;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,12 +19,12 @@ import java.util.List;
 /**
  * Created by Monkey on 2015/6/29.
  */
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class MemorialRecyclerViewAdapter extends RecyclerView.Adapter<MemorialRecyclerViewAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position,Note note);
+        void onItemClick(View view, int position, Note note);
 
-        void onItemLongClick(View view, int position,Note note);
+        void onItemLongClick(View view, int position, Note note);
     }
 
     public OnItemClickListener mOnItemClickListener;
@@ -38,10 +37,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public List<Note> mDatas;
     public LayoutInflater mLayoutInflater;
 
-    public MyRecyclerViewAdapter(Context mContext) {
+    public MemorialRecyclerViewAdapter(Context mContext) {
         this.mContext = mContext;
         mLayoutInflater = LayoutInflater.from(mContext);
-        mDatas=new ArrayList<>();
+        mDatas = new ArrayList<>();
     }
 
     /**
@@ -49,7 +48,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mView = mLayoutInflater.inflate(R.layout.normal_item, parent, false);
+        View mView = mLayoutInflater.inflate(R.layout.memorial_item, parent, false);
         return new ViewHolder(mView);
     }
 
@@ -62,25 +61,30 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(holder.itemView, position,holder.viewNote);
+                    mOnItemClickListener.onItemClick(holder.itemView, position, holder.viewNote);
                 }
             });
 
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mOnItemClickListener.onItemLongClick(holder.itemView, position,holder.viewNote);
+                    mOnItemClickListener.onItemLongClick(holder.itemView, position, holder.viewNote);
                     return true;
                 }
             });
 
         }
         try {
-            holder.DateTextView.setText(mDatas.get(position).getYear() + "/" + mDatas.get(position).getMonth()+"/"+mDatas.get(position).getDay());
-            holder.TitleTextView.setText(mDatas.get(position).getTitle());
-            holder.NoteTextView.setText(mDatas.get(position).getContent());
-            holder.viewNote=mDatas.get(position);
-        }catch (Exception e){
+            int year = mDatas.get(position).getYear();
+            int month = mDatas.get(position).getMonth();
+            int day = mDatas.get(position).getDay();
+            String dateString = year + "-" + month + "-" + day;
+            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = fmt.parse(dateString);
+            holder.NumberTextView.setText(mDatas.get(position).getTitle());
+            holder.TitleTextView.setText("距离" + mDatas.get(position).getYear() + "/" + mDatas.get(position).getMonth() + "/" + mDatas.get(position).getDay() + "日," + mDatas.get(position).getTitle());
+            holder.viewNote = mDatas.get(position);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -93,28 +97,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView DateTextView;
         TextView TitleTextView;
-        TextView NoteTextView;
+        TextView NumberTextView;
         Note viewNote;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            DateTextView=(TextView)itemView.findViewById(R.id.normal_item_date);
-            TitleTextView=(TextView)itemView.findViewById(R.id.normal_item_title);
-            NoteTextView=(TextView)itemView.findViewById(R.id.normal_item_note);
-            viewNote=new Note();
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Note note = mDatas.get(getLayoutPosition());
-//                    ToastUtils.showShort(mContext,note.toString());
-//                    Intent intent = new Intent(v.getContext(), WebActivity.class);
-//                    intent.putExtra("Desc", gank.getDesc());
-//                    intent.putExtra("Url", gank.getUrl());
-//                    v.getContext().startActivity(intent);
-//                }
-//            });
+            NumberTextView = (TextView) itemView.findViewById(R.id.memorial_number);
+            TitleTextView = (TextView) itemView.findViewById(R.id.memorial_title);
+            viewNote = new Note();
         }
     }
 }

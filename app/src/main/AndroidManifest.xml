@@ -36,6 +36,11 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
+        <activity
+            android:name=".MemorialActivity"
+            android:label="@string/title_activity_memorial"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

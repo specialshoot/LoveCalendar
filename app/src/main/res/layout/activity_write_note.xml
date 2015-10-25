@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="38dp"
                 android:text="正文"
-                android:textSize="22dp"
+                android:textSize="@dimen/title_text_size"
                 android:textColor="@color/evernote_title"/>
         </android.support.v7.widget.Toolbar>
 

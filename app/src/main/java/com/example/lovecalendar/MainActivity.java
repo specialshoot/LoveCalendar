@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         .setWrapper(0)
         );
         items.add(new RFACLabelItem<Integer>()
-                        .setLabel("倒数日")
+                        .setLabel("倒数日/生日")
                         .setResId(R.mipmap.mode)
                         .setIconNormalColor(0xff4e342e)
                         .setIconPressedColor(0xff3e2723)
@@ -143,12 +143,32 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         items.add(new RFACLabelItem<Integer>()
                         .setLabel("纪念日")
                         .setResId(R.mipmap.jinian)
-                        .setIconNormalColor(0xff4e342e)
+                        .setIconNormalColor(0xff2e0444)
                         .setIconPressedColor(0xff3e2723)
                         .setLabelColor(Color.WHITE)
                         .setLabelSizeSp(14)
-                        .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa000000, ABTextUtil.dip2px(MainActivity.this, 4)))
+                        .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa8b94a5, ABTextUtil.dip2px(MainActivity.this, 4)))
                         .setWrapper(2)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                        .setLabel("所有事项")
+                        .setResId(R.mipmap.all)
+                        .setIconNormalColor(0xff3e2723)
+                        .setIconPressedColor(0xffd84315)
+                        .setLabelColor(Color.WHITE)
+                        .setLabelSizeSp(14)
+                        .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa3e2723, ABTextUtil.dip2px(MainActivity.this, 4)))
+                        .setWrapper(3)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                        .setLabel("今日事项")
+                        .setResId(R.mipmap.today)
+                        .setIconNormalColor(0xffd84315)
+                        .setIconPressedColor(0xffd84315)
+                        .setLabelColor(Color.WHITE)
+                        .setLabelSizeSp(14)
+                        .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa72d572, ABTextUtil.dip2px(MainActivity.this, 4)))
+                        .setWrapper(4)
         );
         rfaContent.setItems(items)
                 .setIconShadowRadius(ABTextUtil.dip2px(MainActivity.this, 5))
@@ -164,11 +184,32 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (position) {
             case 0:
                 Intent intent = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("na","normal");
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case 1:
+                Intent intentCountDown = new Intent(MainActivity.this, CountDownActivity.class);
+                startActivity(intentCountDown );
                 break;
             case 2:
+                Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
+                startActivity(intentMemorial);
+                break;
+            case 3:
+                Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundleAll=new Bundle();
+                bundleAll.putString("na","all");
+                intentAll.putExtras(bundleAll);
+                startActivity(intentAll);
+                break;
+            case 4:
+                Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundleToday=new Bundle();
+                bundleToday.putString("na","today");
+                intentToday.putExtras(bundleToday);
+                startActivity(intentToday);
                 break;
             default:
                 break;
@@ -181,13 +222,32 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (position) {
             case 0:
                 Intent intent = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("na","normal");
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case 1:
+                Intent intentCountDown = new Intent(MainActivity.this, CountDownActivity.class);
+                startActivity(intentCountDown );
                 break;
             case 2:
                 Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
                 startActivity(intentMemorial);
+                break;
+            case 3:
+                Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundleAll=new Bundle();
+                bundleAll.putString("na","all");
+                intentAll.putExtras(bundleAll);
+                startActivity(intentAll);
+                break;
+            case 4:
+                Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundleToday=new Bundle();
+                bundleToday.putString("na","today");
+                intentToday.putExtras(bundleToday);
+                startActivity(intentToday);
                 break;
             default:
                 break;

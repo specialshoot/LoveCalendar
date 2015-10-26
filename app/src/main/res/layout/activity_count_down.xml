@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.lovecalendar.CreateActivity">
+    tools:context="com.example.lovecalendar.CountDownActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/create_toolbar"
+            android:id="@+id/count_down_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/memorial_title_dark"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageView
-                android:id="@+id/create_image_back"
+                android:id="@+id/count_down_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_menu_revert" />
 
             <TextView
-                android:id="@+id/create_toolbar_title"
+                android:id="@+id/count_down_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="38dp"
+                android:text="倒数日/生日"
                 android:textColor="@color/white"
                 android:textSize="@dimen/title_text_size" />
         </android.support.v7.widget.Toolbar>
@@ -41,6 +43,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_create" />
+    <include layout="@layout/content_count_down" />
 
 </android.support.design.widget.CoordinatorLayout>

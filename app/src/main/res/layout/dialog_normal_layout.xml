@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/meizu_red_transparent"
+        android:background="@color/memorial_title_dark"
         android:orientation="vertical">
 
         <TextView
@@ -22,11 +22,16 @@
             android:textColor="@color/white"
             android:visibility="visible" />
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/black"/>
+
         <LinearLayout
             android:id="@+id/content"
             android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:background="@color/meizu_red_transparent"
+            android:layout_height="100dp"
+            android:background="@color/memorial_dark"
             android:gravity="center">
 
             <EditText
@@ -38,15 +43,16 @@
                 android:paddingLeft="20.0dp"
                 android:paddingRight="20.0dp"
                 android:paddingTop="15.0dip"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60.0dip"
+            android:layout_height="50dp"
             android:layout_gravity="bottom"
-            android:background="@color/meizu_red_transparent"
+            android:background="@color/memorial_title_dark"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -58,8 +64,8 @@
 
                 <Button
                     android:id="@+id/positiveButton"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:background="@drawable/btn_ok_selector"
                     android:gravity="center"
@@ -75,8 +81,8 @@
 
                 <Button
                     android:id="@+id/negativeButton"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:background="@drawable/btn_cancel_selector"
                     android:gravity="center"

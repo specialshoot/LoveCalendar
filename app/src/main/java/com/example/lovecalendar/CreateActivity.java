@@ -28,6 +28,8 @@ import com.example.lovecalendar.view.CustomDialog;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,24 +51,18 @@ public class CreateActivity extends AppCompatActivity {
     TextView create_title_textview;
     @Bind(R.id.create_note_textview)
     TextView create_note_textview;
-    @Bind(R.id.create_ring_textview)
-    TextView create_ring_textview;
     @Bind(R.id.create_type_textview)
     TextView create_type_textview;
-    @Bind(R.id.create_open)
-    Switch create_open;
     @Bind(R.id.create_toolbar_title)
     TextView create_toolbar_title;
 
     public static final String CREATE = "create";
     private String getDateString;
     private Date getDate;
-    private int year, month, day, hour, minute;
-    private String[] typeStrings = {"普通记事", "倒数日", "纪念日"};
+    private int year, month, day;
+    private String[] typeStrings = {"普通记事", "倒数日", "纪念日", "生日"};
     private int typeNum = 0;
-    private boolean isRingOpen = false;
     private boolean isModifyMode = false;
-    private long haveId;
     private Note haveNote;
 
     @Override
@@ -94,22 +90,14 @@ public class CreateActivity extends AppCompatActivity {
                     create_type_textview.setText("纪念日");
                     typeNum = 3;
                     break;
+                case 4:
+                    create_type_textview.setText("生日");
+                    typeNum = 4;
+                    break;
                 default:
                     break;
             }
-            if (haveNote.getIsOpen() == 1) {
-                isRingOpen = true;
-                create_open.setChecked(true);
-            } else {
-                isRingOpen = false;
-                create_open.setChecked(false);
-            }
-            hour = haveNote.getHour();
-            minute = haveNote.getMinute();
-            create_ring_textview.setText("您选择了：" + hour + "时" + minute + "分的闹钟");
             isModifyMode = true;
-//            haveId=haveNote.getId();
-//            System.out.println("ID : "+haveId);
         }
 
         getDateString = bundle.getString("date");
@@ -119,22 +107,6 @@ public class CreateActivity extends AppCompatActivity {
 
         create_toolbar_title.setText(year + "-" + month + "-" + day);
         setSupportActionBar(create_toolbar);
-        create_open.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {  //Switch状态为开
-                    if (create_ring_textview.getText().equals("")) {
-                        ToastUtils.showShort(CreateActivity.this, "请先设置闹钟");
-                        isRingOpen = false;
-                        create_open.setChecked(false);
-                    } else {
-                        isRingOpen = true;
-                    }
-                } else {
-                    isRingOpen = false;
-                }
-            }
-        });
     }
 
     @OnClick(R.id.create_title)
@@ -173,27 +145,6 @@ public class CreateActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUSET);
     }
 
-    @OnClick(R.id.create_ring)
-    void createRing() {
-        Calendar c = Calendar.getInstance();
-        // 创建一个TimePickerDialog实例，并把它显示出来。
-        new TimePickerDialog(CreateActivity.this,
-                // 绑定监听器
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker tp, int HourOfDay, int Minute) {
-                        hour = HourOfDay;
-                        minute = Minute;
-                        create_ring_textview.setText("您选择了：" + hour + "时" + minute + "分的闹钟");
-                    }
-                }
-                //设置初始时间
-                , c.get(Calendar.HOUR_OF_DAY)
-                , c.get(Calendar.MINUTE)
-                //true表示采用24小时制
-                , true).show();
-    }
-
     @OnClick(R.id.create_type)
     void createType() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -213,7 +164,7 @@ public class CreateActivity extends AppCompatActivity {
 
     @OnClick(R.id.create_image_back)
     void createBack() {
-        if(isModifyMode){
+        if (isModifyMode) {
             new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
                     .setMessage("确认放弃修改？")//设置显示的内容
@@ -232,7 +183,7 @@ public class CreateActivity extends AppCompatActivity {
                     Log.i("alertdialog", " 请保存数据！");
                 }
             }).show();//在按键响应事件中显示此对话框
-        }else {
+        } else {
             new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
                     .setMessage("确认放弃记事？")//设置显示的内容
@@ -278,6 +229,45 @@ public class CreateActivity extends AppCompatActivity {
             } else if (typeNum == 0) {
                 ToastUtils.showShort(CreateActivity.this, "请选择笔记类型");
             } else {
+                if (typeNum == 2) {
+                    try {
+                        String nowString = "";
+                        String dateString = getDateString;
+                        Calendar tempCalendar = Calendar.getInstance();
+                        int nowYear = tempCalendar.get(Calendar.YEAR);
+                        int nowMonth = tempCalendar.get(Calendar.MONTH) + 1;
+                        int nowDay = tempCalendar.get(Calendar.DAY_OF_MONTH);
+                        nowString = nowYear + "-" + nowMonth + "-" + nowDay;
+                        long interval = getDistanceDays(nowString, dateString);
+                        if (interval == 0) {
+                            ToastUtils.showShort(CreateActivity.this, "就是今天,赶紧做吧");
+                            return true;
+                        } else if (interval < 0) {
+                            ToastUtils.showShort(CreateActivity.this, "倒数日时间早于今天");
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (typeNum == 3) {
+                    try {
+                        String nowString = "";
+                        String dateString = getDateString;
+                        Calendar tempCalendar = Calendar.getInstance();
+                        int nowYear = tempCalendar.get(Calendar.YEAR);
+                        int nowMonth = tempCalendar.get(Calendar.MONTH) + 1;
+                        int nowDay = tempCalendar.get(Calendar.DAY_OF_MONTH);
+                        nowString = nowYear + "-" + nowMonth + "-" + nowDay;
+                        long interval = getDistanceDays(nowString, dateString);
+                        if(interval>0){
+                            ToastUtils.showShort(CreateActivity.this,"纪念日不应超过今天");
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 QueryBuilder qb = new QueryBuilder(Note.class)
                         .columns(new String[]{"_id"})
                         .where("title = ?", new String[]{create_title_textview.getText().toString()});
@@ -290,21 +280,14 @@ public class CreateActivity extends AppCompatActivity {
                     if (isModifyMode) {
                         note = haveNote;
                     }
-//                    if (isModifyMode) {
-//                        note.setId(haveId);
-//                    }
                     note.setTitle(create_title_textview.getText().toString());
                     note.setContent(create_note_textview.getText().toString());
                     note.setYear(year);
                     note.setMonth(month);
                     note.setDay(day);
                     note.setType(typeNum);
-                    if (isRingOpen) {
-                        note.setIsOpen(1);
-                        note.setHour(hour);
-                        note.setMinute(minute);
-                    } else {
-                        note.setIsOpen(0);
+                    if(typeNum==2){
+                        note.setIsFisish(0);
                     }
                     if (isModifyMode) {
                         App.sDb.update(note, ConflictAlgorithm.Fail);
@@ -323,6 +306,34 @@ public class CreateActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 比较时间差,用于判断选择倒数日一项选择日期是否小于当前日期
+     *
+     * @param str1 当前日期
+     * @param str2 选择日期
+     * @return <=0代表不符合倒数日要求
+     * @throws Exception
+     */
+
+    public static long getDistanceDays(String str1, String str2) throws Exception {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date one;
+        Date two;
+        long days = 0;
+        try {
+            one = df.parse(str1);
+            two = df.parse(str2);
+            long time1 = one.getTime();
+            long time2 = two.getTime();
+            long diff;
+            diff = time2 - time1;
+            days = diff / (1000 * 60 * 60 * 24);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return days;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -337,7 +348,7 @@ public class CreateActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(isModifyMode){
+            if (isModifyMode) {
                 new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
                         .setMessage("确认放弃修改？")//设置显示的内容
@@ -356,7 +367,7 @@ public class CreateActivity extends AppCompatActivity {
                         Log.i("alertdialog", " 请保存数据！");
                     }
                 }).show();//在按键响应事件中显示此对话框
-            }else {
+            } else {
                 new AlertDialog.Builder(CreateActivity.this).setTitle("系统提示")//设置对话框标题
 
                         .setMessage("确认放弃记事？")//设置显示的内容

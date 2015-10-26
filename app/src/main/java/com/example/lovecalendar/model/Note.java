@@ -23,14 +23,8 @@ public class Note extends Soul implements Serializable {
     private int month;
     @NotNull @Column("day")
     private int day;
-    @Column("hour")
-    private int hour;
-    @Column("minute")
-    private int minute;
-    @NotNull @Column("isOpen")
-    private int isOpen;   //打开闹钟？
     @Column("isFinish")
-    private int isFisish;   //完成？
+    private int isFisish=0;   //完成？
     @NotNull @Column("type")
     private int type;   //笔记类型？
 
@@ -74,30 +68,6 @@ public class Note extends Soul implements Serializable {
         this.day = day;
     }
 
-    public int getHour() {
-        return hour;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public void setMinute(int minute) {
-        this.minute = minute;
-    }
-
-    public int getIsOpen() {
-        return isOpen;
-    }
-
-    public void setIsOpen(int isOpen) {
-        this.isOpen = isOpen;
-    }
-
     public int getIsFisish() {
         return isFisish;
     }
@@ -122,9 +92,6 @@ public class Note extends Soul implements Serializable {
                 ", year=" + year +
                 ", month=" + month +
                 ", day=" + day +
-                ", hour=" + hour +
-                ", minute=" + minute +
-                ", isOpen=" + isOpen +
                 ", isFisish=" + isFisish +
                 ", type=" + type +
                 '}';

@@ -30,8 +30,6 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
 
     @Bind(R.id.memorial_toolbar)
     Toolbar toolbar;
-    @Bind(R.id.memorial_title)
-    TextView memorial_title;
     @Bind(R.id.rv_memorial)
     RecyclerView mRecyclerView;
 

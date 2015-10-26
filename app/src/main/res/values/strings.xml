@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">记事</string>
+    <string name="app_name">爱记事</string>
     <string name="action_settings">设置</string>
     <string name="action_today">返回今日</string>
     <string name="action_date">跳转到指定日期</string>
+    <string name="action_background">选择壁纸</string>
     <string name="title_activity_note">NoteActivity</string>
     <string name="title_activity_create">CreateActivity</string>
 
@@ -16,4 +17,5 @@
     <string name="action_save">保存</string>
     <string name="title_activity_view">ViewActivity</string>
     <string name="title_activity_memorial">MemorialActivity</string>
+    <string name="title_activity_count_down">CountDownActivity</string>
 </resources>

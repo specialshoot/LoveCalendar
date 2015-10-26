@@ -4,89 +4,60 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import com.example.lovecalendar.Utils.SnackbarUtil;
-import com.example.lovecalendar.Utils.ToastUtils;
-import com.example.lovecalendar.adapter.MyRecyclerViewAdapter;
+import com.example.lovecalendar.adapter.CountDownRecyclerViewAdapter;
 import com.example.lovecalendar.model.Note;
 import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NormalActivity extends AppCompatActivity implements MyRecyclerViewAdapter.OnItemClickListener {
+public class CountDownActivity extends AppCompatActivity implements CountDownRecyclerViewAdapter.OnItemClickListener {
 
-    @Bind(R.id.normal_toolbar)
+    @Bind(R.id.count_down_toolbar)
     Toolbar toolbar;
-    @Bind(R.id.normal_title)
-    TextView normal_title;
-    @Bind(R.id.rv_normal)
+    @Bind(R.id.rv_count_down)
     RecyclerView mRecyclerView;
 
-    private MyRecyclerViewAdapter mRecyclerViewAdapter;
+    private static final int REQUEST = 4;
+    private CountDownRecyclerViewAdapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static final String[] operationStrings = {"删除"};
-    private static final int REQUEST = 2;
-    private String na = "";
-    private int nowYear,nowMonth,nowDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_normal);
+        setContentView(R.layout.activity_count_down);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        Bundle bundle = getIntent().getExtras();
-        na = bundle.getString("na");
+        QueryBuilder query = new QueryBuilder(Note.class)
+                .appendOrderDescBy("year")
+                .appendOrderDescBy("month")
+                .appendOrderDescBy("day")
+                .where("type = ?", new String[]{"2"});
 
-        Calendar tempCalendar = Calendar.getInstance();
-        nowYear = tempCalendar.get(Calendar.YEAR);
-        nowMonth = tempCalendar.get(Calendar.MONTH) + 1;
-        nowDay = tempCalendar.get(Calendar.DAY_OF_MONTH);
-        QueryBuilder query = null;
-        if (na.equals("normal")) {
-            normal_title.setText("普通记事");
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day")
-                    .where("type = ?", new String[]{"1"});
-        } else if (na.equals("all")) {
-            normal_title.setText("全部记事");
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day");
-        } else if (na.equals("today")) {
-            normal_title.setText("今日事件");
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day").where("year = ? and month=? and day=?", new String[]{nowYear + "", nowMonth + "", nowDay + ""});
-        } else {
-            ToastUtils.showShort(NormalActivity.this, "错误");
-            finish();
-        }
         ArrayList<Note> temp = App.sDb.query(query);
+        query = new QueryBuilder(Note.class)
+                .appendOrderDescBy("year")
+                .appendOrderDescBy("month")
+                .appendOrderDescBy("day")
+                .where("type = ?", new String[]{"4"});
+        ArrayList<Note> temp2 = App.sDb.query(query);
+        temp.addAll(temp2);
         System.out.println("有" + temp.size() + "条数据");
 
-        mLayoutManager = new LinearLayoutManager(NormalActivity.this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerViewAdapter = new MyRecyclerViewAdapter(NormalActivity.this);
+        mLayoutManager = new LinearLayoutManager(CountDownActivity.this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerViewAdapter = new CountDownRecyclerViewAdapter(CountDownActivity.this);
         mRecyclerViewAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -97,9 +68,8 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
 
     @Override
     public void onItemClick(View view, int position, Note note) {
-//        ToastUtils.showShort(NormalActivity.this, note.toString());
         String sendDate = note.getYear() + "-" + note.getMonth() + "-" + note.getDay();
-        Intent intent = new Intent(NormalActivity.this, CreateActivity.class);
+        Intent intent = new Intent(CountDownActivity.this, CreateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("note", note);
         bundle.putString("date", sendDate);
@@ -112,7 +82,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
-        if (requestCode == NormalActivity.REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == CountDownActivity.REQUEST && resultCode == RESULT_OK) {
             System.out.println("onActivityResult");
             resetNote();
         }
@@ -127,7 +97,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        new AlertDialog.Builder(NormalActivity.this).setTitle("系统提示")
+                        new AlertDialog.Builder(CountDownActivity.this).setTitle("系统提示")
 
                                 .setMessage("确认删除？")//设置显示的内容
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {//添加确定按钮
@@ -158,36 +128,27 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
     }
 
     public void resetNote() {
-        QueryBuilder query = null;
-        if (na.equals("normal")) {
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day")
-                    .where("type = ?", new String[]{"1"});
-        } else if (na.equals("all")) {
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day");
-        } else if (na.equals("today")) {
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day").where("year = ? and month=? and day=?", new String[]{nowYear + "", nowMonth + "", nowDay + ""});
-        } else {
-            ToastUtils.showShort(NormalActivity.this, "错误");
-            finish();
-        }
+        QueryBuilder query = new QueryBuilder(Note.class)
+                .appendOrderDescBy("year")
+                .appendOrderDescBy("month")
+                .appendOrderDescBy("day")
+                .where("type = ?", new String[]{"2"});
         ArrayList<Note> temp = App.sDb.query(query);
+        query = new QueryBuilder(Note.class)
+                .appendOrderDescBy("year")
+                .appendOrderDescBy("month")
+                .appendOrderDescBy("day")
+                .where("type = ?", new String[]{"4"});
+        ArrayList<Note> temp2 = App.sDb.query(query);
+        temp.addAll(temp2);
         System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();
         mRecyclerViewAdapter.mDatas.addAll(temp);
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    @OnClick(R.id.normal_back)
-    void NormalBack() {
+    @OnClick(R.id.count_down_back)
+    void CountBack() {
         finish();
     }
 }

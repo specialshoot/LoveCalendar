@@ -16,7 +16,7 @@
             android:id="@+id/memorial_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/memorial_title_dark"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageView
@@ -34,6 +34,11 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/title_text_size" />
         </android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/black"/>
 
     </android.support.design.widget.AppBarLayout>
 

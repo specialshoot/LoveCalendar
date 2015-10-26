@@ -8,6 +8,7 @@
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="white_transparent">#44ffffff</color>
     <color name="meizu_red">#e95345</color>
     <color name="meizu_red_transparent">#88e95345</color>
     <color name="meizu_grey">#636363</color>
@@ -18,4 +19,16 @@
     <color name="evernote_title">#50514b</color>
     <color name="md_green_200">#72d572</color>
     <color name="md_teal_900">#004d40</color>
+
+    <color name="memorial_dark">#2c2e3b</color>
+    <color name="memorial_title_dark">#292b37</color>
+    <color name="memorial_line_dark">#232531</color>
+    <color name="memorial_item_title">#b1b1b1</color>
+    <color name="memorial_item_day">#352b34</color>
+    <color name="days_since">#8b94a5</color>
+    <color name="midnightblue">#191970</color><!--中灰兰色 -->
+    <color name="purple">#800080</color><!--紫色 -->
+    <color name="love_purple">#2e0444</color><!--紫色 -->
+    <color name="love_purple_transparent">#552e0444</color>
+
 </resources>

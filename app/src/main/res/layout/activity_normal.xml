@@ -16,7 +16,7 @@
             android:id="@+id/normal_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/meizu_red"
+            android:background="@color/memorial_title_dark"
             app:popupTheme="@style/AppTheme.PopupOverlay">
             <ImageView
                 android:id="@+id/normal_back"
@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
+                android:id="@+id/normal_title"
                 android:text="普通记事"
                 android:textSize="@dimen/title_text_size"
                 android:layout_marginLeft="38dp"
@@ -31,6 +32,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </android.support.v7.widget.Toolbar>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@color/black"/>
 
     </android.support.design.widget.AppBarLayout>
 

@@ -13,7 +13,7 @@
         android:background="@drawable/memorialshape">
 
         <TextView
-            android:id="@+id/memorial_title"
+            android:id="@+id/countdown_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -21,11 +21,11 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="距离2015/6/22日,我们在一起"
-            android:textColor="@color/md_teal_900"
+            android:textColor="@color/days_since"
             android:textSize="16dp" />
 
         <TextView
-            android:id="@+id/memorial_number"
+            android:id="@+id/countdown_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -38,25 +38,26 @@
             android:textSize="40dp" />
 
         <TextView
-            android:id="@+id/DPlus"
+            android:id="@+id/DMINUTE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/memorial_number"
-            android:layout_toLeftOf="@id/memorial_number"
+            android:layout_alignBaseline="@id/countdown_number"
+            android:layout_toLeftOf="@id/countdown_number"
             android:layout_marginRight="10dp"
-            android:text="D+"
+            android:text="D-"
             android:textStyle="bold"
             android:textColor="@color/md_teal_900"
             android:textSize="30dp" />
 
         <TextView
+            android:id="@+id/count_item_type"
             android:layout_width="120dp"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp"
             android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:text="DAYS SINCE"
+            android:text="REMAINING"
             android:textSize="16dp"
             android:textStyle="bold"
             android:textColor="@color/white"

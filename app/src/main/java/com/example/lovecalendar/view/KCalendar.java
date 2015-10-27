@@ -226,7 +226,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
         // 下个月第一天
         int nextMonthDay = 1;
         int lastMonthDay = 1;
-        QueryBuilder query=null;
+        QueryBuilder query = null;
 
         // 填充每一个空格
         for (int i = 0; i < ROWS_TOTAL; i++) {
@@ -253,9 +253,9 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         lastMonthDay = firstShowDay + k;
                         RelativeLayout group = getDateView(0, k);
                         group.setGravity(Gravity.CENTER);
-                        LinearLayout llview=null;
+                        LinearLayout llview = null;
                         TextView view = null;
-                        TextView viewNong=null;
+                        TextView viewNong = null;
                         if (group.getChildCount() > 0) {
                             llview = (LinearLayout) group.getChildAt(0);
                             llview.setOrientation(LinearLayout.VERTICAL);
@@ -269,14 +269,14 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                             group.addView(llview);
                         }
 
-                        view=new TextView(getContext());
+                        view = new TextView(getContext());
                         view.setText(Integer.toString(lastMonthDay));
                         view.setTextColor(COLOR_TX_OTHER_MONTH_DAY);
                         view.setGravity(Gravity.CENTER);
                         dates[0][k] = format(new Date(year, month, lastMonthDay));
                         // 设置日期背景色
                         if (dayBgColorMap.get(dates[0][k]) != null) {
-                             llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
+                            llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
                         } else {
                             llview.setBackgroundColor(Color.TRANSPARENT);
                         }
@@ -296,9 +296,9 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                 } else {    // 这个月第一天是礼拜天，不用绘制上个月的日期，直接绘制这个月的日期
                     RelativeLayout group = getDateView(i, j);
                     group.setGravity(Gravity.CENTER);
-                    LinearLayout llview=null;
+                    LinearLayout llview = null;
                     TextView view = null;
-                    TextView viewNong=null;
+                    TextView viewNong = null;
                     if (group.getChildCount() > 0) {
                         llview = (LinearLayout) group.getChildAt(0);
                         llview.setOrientation(LinearLayout.VERTICAL);
@@ -311,8 +311,8 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         group.removeAllViews();
                         group.addView(llview);
                     }
-                    view=new TextView(getContext());
-                    viewNong=new TextView(getContext());
+                    view = new TextView(getContext());
+                    viewNong = new TextView(getContext());
                     // 本月
                     if (day <= lastDay) {
                         dates[i][j] = format(new Date(calendarday.getYear(), calendarday.getMonth(), day));
@@ -341,15 +341,28 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                             view.setTextColor(Color.RED);
                             viewNong.setTextColor(Color.RED);
                             llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
-                        }else {
+                        } else {
                             llview.setBackgroundColor(Color.TRANSPARENT);
                         }
-                        query=new QueryBuilder(Note.class)
-                                .where("year = ? and month=? and day=?",
-                                        new String[]{(calendarday.getYear()+1900) + "", (calendarday.getMonth()+1) + "", day + ""});
-                        long number=App.sDb.queryCount(query);
-                        if(number>0){
-                            llview.setBackgroundResource(R.drawable.havenote);
+                        try {
+                            query = new QueryBuilder(Note.class)
+                                    .whereOr("year = ? and month=? and day=?",
+                                            new String[]{(calendarday.getYear() + 1900) + "", (calendarday.getMonth() + 1) + "", day + ""})
+                                    .whereOr("type = ? and month=? and day=?",
+                                            new String[]{3 + "", (calendarday.getMonth() + 1) + "", day + ""})
+                                    .whereOr("type = ? and month=? and day=?",
+                                            new String[]{4 + "", (calendarday.getMonth() + 1) + "", day + ""});
+                            long number = App.sDb.queryCount(query);
+
+                            if (number > 0) {
+                                if(dayBgColorMap.get(dates[i][j]) != null){
+                                    llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
+                                }else {
+                                    llview.setBackgroundResource(R.drawable.havenote);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                         llview.removeAllViews();
                         llview.addView(view);
@@ -357,8 +370,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         // 设置标记
                         setMarker(group, i, j);
                         day++;
-                    }
-                    else {    // 下个月
+                    } else {    // 下个月
                         if (calendarday.getMonth() == Calendar.DECEMBER) {
                             dates[i][j] = format(new Date(
                                     calendarday.getYear() + 1,

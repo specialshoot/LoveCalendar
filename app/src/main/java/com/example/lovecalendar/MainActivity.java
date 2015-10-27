@@ -14,7 +14,9 @@ import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.example.lovecalendar.Utils.ToastUtils;
+import com.example.lovecalendar.model.Note;
 import com.example.lovecalendar.view.KCalendar;
+import com.litesuits.orm.db.assit.QueryBuilder;
 import com.wangjie.androidbucket.utils.ABTextUtil;
 import com.wangjie.androidbucket.utils.imageprocess.ABShape;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private int year, month, day;
     String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
     public static final int REQUSET = 1;
+    QueryBuilder query=null;
+    private boolean haveEvent=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             setSupportActionBar(toolbar);
             window_calendar.showCalendar(years, month);
             window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+            queryHaveEvent();
         }
 
         //监听所选中的日期
@@ -104,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                             R.drawable.calendar_date_focused);
                     date = dateFormat;//最后返回给全局 date
                 }
+                queryHaveEvent();
             }
         });
 
@@ -115,6 +121,23 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         setRfa();
+    }
+
+    private void queryHaveEvent(){
+        query = new QueryBuilder(Note.class)
+                .whereOr("year = ? and month=? and day=?",
+                        new String[]{year + "", month + "", day + ""})
+                .whereOr("type = ? and month=? and day=?",
+                        new String[]{3 + "", month + "", day + ""})
+                .whereOr("type = ? and month=? and day=?",
+                        new String[]{4 + "", month + "", day + ""});
+        long number = App.sDb.queryCount(query);
+        if(number>0){
+            haveEvent=true;
+        }else{
+            haveEvent=false;
+        }
+        invalidateOptionsMenu();
     }
 
     private void setRfa() {
@@ -161,16 +184,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa3e2723, ABTextUtil.dip2px(MainActivity.this, 4)))
                         .setWrapper(3)
         );
-        items.add(new RFACLabelItem<Integer>()
-                        .setLabel("今日事项")
-                        .setResId(R.mipmap.today)
-                        .setIconNormalColor(0xffd84315)
-                        .setIconPressedColor(0xffd84315)
-                        .setLabelColor(Color.WHITE)
-                        .setLabelSizeSp(14)
-                        .setLabelBackgroundDrawable(ABShape.generateCornerShapeDrawable(0xaa72d572, ABTextUtil.dip2px(MainActivity.this, 4)))
-                        .setWrapper(4)
-        );
         rfaContent.setItems(items)
                 .setIconShadowRadius(ABTextUtil.dip2px(MainActivity.this, 5))
                 .setIconShadowColor(0xff888888)
@@ -185,8 +198,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (position) {
             case 0:
                 Intent intent = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("na","normal");
+                Bundle bundle = new Bundle();
+                bundle.putString("na", "normal");
                 intent.putExtras(bundle);
                 startActivityForResult(intent, REQUSET);
                 break;
@@ -195,22 +208,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 startActivityForResult(intentCountDown, REQUSET);
                 break;
             case 2:
-                Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
+                Intent intentMemorial = new Intent(MainActivity.this, MemorialActivity.class);
                 startActivityForResult(intentMemorial, REQUSET);
                 break;
             case 3:
                 Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundleAll=new Bundle();
-                bundleAll.putString("na","all");
+                Bundle bundleAll = new Bundle();
+                bundleAll.putString("na", "all");
                 intentAll.putExtras(bundleAll);
                 startActivityForResult(intentAll, REQUSET);
-                break;
-            case 4:
-                Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundleToday=new Bundle();
-                bundleToday.putString("na","today");
-                intentToday.putExtras(bundleToday);
-                startActivityForResult(intentToday, REQUSET);
                 break;
             default:
                 break;
@@ -223,8 +229,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (position) {
             case 0:
                 Intent intent = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("na","normal");
+                Bundle bundle = new Bundle();
+                bundle.putString("na", "normal");
                 intent.putExtras(bundle);
                 startActivityForResult(intent, REQUSET);
                 break;
@@ -233,22 +239,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 startActivityForResult(intentCountDown, REQUSET);
                 break;
             case 2:
-                Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
+                Intent intentMemorial = new Intent(MainActivity.this, MemorialActivity.class);
                 startActivityForResult(intentMemorial, REQUSET);
                 break;
             case 3:
                 Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundleAll=new Bundle();
-                bundleAll.putString("na","all");
+                Bundle bundleAll = new Bundle();
+                bundleAll.putString("na", "all");
                 intentAll.putExtras(bundleAll);
                 startActivityForResult(intentAll, REQUSET);
-                break;
-            case 4:
-                Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
-                Bundle bundleToday=new Bundle();
-                bundleToday.putString("na","today");
-                intentToday.putExtras(bundleToday);
-                startActivityForResult(intentToday, REQUSET);
                 break;
             default:
                 break;
@@ -270,6 +269,18 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem item = menu.findItem(R.id.action_event);
+        if(haveEvent==false){
+            item.setIcon(android.R.drawable.star_big_off);
+        }else {
+            item.setIcon(android.R.drawable.star_big_on);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -302,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 setSupportActionBar(toolbar);
                 window_calendar.showCalendar(years, month);
                 window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+                queryHaveEvent();
             }
             return true;
         }
@@ -309,6 +321,33 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if (id == R.id.action_date) {
             DatePickerDialog dlg = new DatePickerDialog(this, this, year, month - 1, day);
             dlg.show();
+            return true;
+        }
+
+        if (id == R.id.action_event) {
+            if(haveEvent==true) {
+                Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
+                Bundle bundleToday = new Bundle();
+                boolean specialDay=false;
+                query = new QueryBuilder(Note.class)
+                        .whereOr("type = ? and month=? and day=?",
+                                new String[]{3 + "", month + "", day + ""})
+                        .whereOr("type = ? and month=? and day=?",
+                                new String[]{4 + "", month + "", day + ""});
+                long number = App.sDb.queryCount(query);
+                if(number>0){
+                    specialDay=true;
+                }
+                bundleToday.putString("na", "event");
+                bundleToday.putInt("year", year);
+                bundleToday.putInt("month", month);
+                bundleToday.putInt("day", day);
+                bundleToday.putBoolean("special",specialDay);
+                intentToday.putExtras(bundleToday);
+                startActivityForResult(intentToday, REQUSET);
+            }else {
+                ToastUtils.showShort(MainActivity.this,"所选日期没有事件");
+            }
             return true;
         }
 
@@ -329,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 setSupportActionBar(toolbar);
                 window_calendar.showCalendar(years, month);
                 window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+                queryHaveEvent();
             }
         }
     }
@@ -337,8 +377,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     public void onDateSet(DatePicker view, int yearOfToday, int monthOfYear, int dayOfMonth) {
 
         if (year == yearOfToday && month == monthOfYear + 1 && day == dayOfMonth) {
-            //Toast.makeText(TodayActivity.this, "时间选择没有改变", Toast.LENGTH_SHORT).show();
-            System.out.println("时间选择没有改变");
+//            Toast.makeText(TodayActivity.this, "时间选择没有改变", Toast.LENGTH_SHORT).show();
+//            System.out.println("时间选择没有改变");
         } else {
             window_calendar.removeAllBgColor();
             year = yearOfToday;
@@ -360,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 setSupportActionBar(toolbar);
                 window_calendar.showCalendar(years, month);
                 window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+                queryHaveEvent();
             }
         }
 

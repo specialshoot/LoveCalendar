@@ -42,7 +42,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
     private static final String[] operationStrings = {"删除"};
     private static final int REQUEST = 2;
     private String na = "";
-    private int nowYear,nowMonth,nowDay;
+    private int nowYear, nowMonth, nowDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +54,6 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
         Bundle bundle = getIntent().getExtras();
         na = bundle.getString("na");
 
-        Calendar tempCalendar = Calendar.getInstance();
-        nowYear = tempCalendar.get(Calendar.YEAR);
-        nowMonth = tempCalendar.get(Calendar.MONTH) + 1;
-        nowDay = tempCalendar.get(Calendar.DAY_OF_MONTH);
         QueryBuilder query = null;
         if (na.equals("normal")) {
             normal_title.setText("普通记事");
@@ -72,12 +68,28 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
                     .appendOrderDescBy("year")
                     .appendOrderDescBy("month")
                     .appendOrderDescBy("day");
-        } else if (na.equals("today")) {
-            normal_title.setText("今日事件");
-            query = new QueryBuilder(Note.class)
-                    .appendOrderDescBy("year")
-                    .appendOrderDescBy("month")
-                    .appendOrderDescBy("day").where("year = ? and month=? and day=?", new String[]{nowYear + "", nowMonth + "", nowDay + ""});
+        } else if (na.equals("event")) {
+            boolean specialDay = bundle.getBoolean("special");
+
+            nowYear = bundle.getInt("year");
+            nowMonth = bundle.getInt("month");
+            nowDay = bundle.getInt("day");
+
+            if (specialDay == true) {
+                query = new QueryBuilder(Note.class)
+                        .whereOr("year = ? and month=? and day=?",
+                                new String[]{nowYear + "", nowMonth + "", nowDay + ""})
+                        .whereOr("type = ? and month=? and day=?",
+                                new String[]{3 + "", nowMonth + "", nowDay + ""})
+                        .whereOr("type = ? and month=? and day=?",
+                                new String[]{4 + "", nowMonth + "", nowDay + ""});
+                long number = App.sDb.queryCount(query);
+            } else {
+                query = new QueryBuilder(Note.class)
+                        .appendOrderDescBy("year")
+                        .appendOrderDescBy("month")
+                        .appendOrderDescBy("day").where("year = ? and month=? and day=?", new String[]{nowYear + "", nowMonth + "", nowDay + ""});
+            }
         } else {
             ToastUtils.showShort(NormalActivity.this, "错误");
             finish();
@@ -170,7 +182,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
                     .appendOrderDescBy("year")
                     .appendOrderDescBy("month")
                     .appendOrderDescBy("day");
-        } else if (na.equals("today")) {
+        } else if (na.equals("event")) {
             query = new QueryBuilder(Note.class)
                     .appendOrderDescBy("year")
                     .appendOrderDescBy("month")
@@ -188,7 +200,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
 
     @OnClick(R.id.normal_back)
     void NormalBack() {
-        Intent intent=new Intent();
+        Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
     }

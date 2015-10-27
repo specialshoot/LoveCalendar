@@ -140,6 +140,8 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
 
     @OnClick(R.id.memorial_back)
     void MemorialBack() {
+        Intent intent=new Intent();
+        setResult(RESULT_OK, intent);
         finish();
     }
 }

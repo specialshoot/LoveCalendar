@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     private static Boolean isExit = false;    //判断是否第一次点击退出
     private int year, month, day;
     String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
+    public static final int REQUSET = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,29 +188,29 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 Bundle bundle=new Bundle();
                 bundle.putString("na","normal");
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, REQUSET);
                 break;
             case 1:
                 Intent intentCountDown = new Intent(MainActivity.this, CountDownActivity.class);
-                startActivity(intentCountDown );
+                startActivityForResult(intentCountDown, REQUSET);
                 break;
             case 2:
                 Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
-                startActivity(intentMemorial);
+                startActivityForResult(intentMemorial, REQUSET);
                 break;
             case 3:
                 Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
                 Bundle bundleAll=new Bundle();
                 bundleAll.putString("na","all");
                 intentAll.putExtras(bundleAll);
-                startActivity(intentAll);
+                startActivityForResult(intentAll, REQUSET);
                 break;
             case 4:
                 Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
                 Bundle bundleToday=new Bundle();
                 bundleToday.putString("na","today");
                 intentToday.putExtras(bundleToday);
-                startActivity(intentToday);
+                startActivityForResult(intentToday, REQUSET);
                 break;
             default:
                 break;
@@ -225,29 +226,29 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 Bundle bundle=new Bundle();
                 bundle.putString("na","normal");
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, REQUSET);
                 break;
             case 1:
                 Intent intentCountDown = new Intent(MainActivity.this, CountDownActivity.class);
-                startActivity(intentCountDown );
+                startActivityForResult(intentCountDown, REQUSET);
                 break;
             case 2:
                 Intent intentMemorial=new Intent(MainActivity.this,MemorialActivity.class);
-                startActivity(intentMemorial);
+                startActivityForResult(intentMemorial, REQUSET);
                 break;
             case 3:
                 Intent intentAll = new Intent(MainActivity.this, NormalActivity.class);
                 Bundle bundleAll=new Bundle();
                 bundleAll.putString("na","all");
                 intentAll.putExtras(bundleAll);
-                startActivity(intentAll);
+                startActivityForResult(intentAll, REQUSET);
                 break;
             case 4:
                 Intent intentToday = new Intent(MainActivity.this, NormalActivity.class);
                 Bundle bundleToday=new Bundle();
                 bundleToday.putString("na","today");
                 intentToday.putExtras(bundleToday);
-                startActivity(intentToday);
+                startActivityForResult(intentToday, REQUSET);
                 break;
             default:
                 break;
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         Bundle bundle = new Bundle();
         bundle.putString("date", sendDate);
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivityForResult(intent, REQUSET);
     }
 
     @Override
@@ -312,6 +313,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        //requestCode标示请求的标示   resultCode表示有数据
+        if (requestCode == REQUSET && resultCode == RESULT_OK) {
+            window_calendar.removeAllBgColor();
+            if (null != date) {
+                int years = Integer.parseInt(date.substring(0, date.indexOf("-")));
+                int month = Integer.parseInt(date.substring(date.indexOf("-") + 1, date.lastIndexOf("-")));
+                toolbar.setTitle(years + " 年 " + month + " 月");
+                setSupportActionBar(toolbar);
+                window_calendar.showCalendar(years, month);
+                window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);
+            }
+        }
     }
 
     @Override

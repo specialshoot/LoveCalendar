@@ -188,6 +188,8 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
 
     @OnClick(R.id.normal_back)
     void NormalBack() {
+        Intent intent=new Intent();
+        setResult(RESULT_OK, intent);
         finish();
     }
 }

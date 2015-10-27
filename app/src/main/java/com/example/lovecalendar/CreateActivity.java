@@ -297,6 +297,8 @@ public class CreateActivity extends AppCompatActivity {
                     } else {
                         App.sDb.insert(note);
                     }
+                    Intent intent=new Intent();
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }

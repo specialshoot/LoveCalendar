@@ -149,6 +149,8 @@ public class CountDownActivity extends AppCompatActivity implements CountDownRec
 
     @OnClick(R.id.count_down_back)
     void CountBack() {
+        Intent intent=new Intent();
+        setResult(RESULT_OK, intent);
         finish();
     }
 }

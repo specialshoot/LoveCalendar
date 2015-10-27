@@ -41,7 +41,7 @@
             android:layout_marginBottom="15dp"
             android:padding="8dp"
             rfab:rfab_size="normal"
-            rfab:rfab_drawable="@android:drawable/ic_menu_view"
+            rfab:rfab_drawable="@android:drawable/ic_menu_search"
             rfab:rfab_color_normal="#37474f"
             rfab:rfab_color_pressed="#263238"
             rfab:rfab_shadow_radius="7dp"

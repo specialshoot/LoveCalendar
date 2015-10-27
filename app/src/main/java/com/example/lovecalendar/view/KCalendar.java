@@ -17,8 +17,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.example.lovecalendar.App;
 import com.example.lovecalendar.R;
 import com.example.lovecalendar.Utils.LunarUtils.CalendarUtil;
+import com.example.lovecalendar.model.Note;
+import com.litesuits.orm.db.assit.QueryBuilder;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +36,7 @@ import java.util.Map;
  */
 @SuppressWarnings("deprecation")
 public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureListener {
-    public static final int COLOR_BG_WEEK_TITLE = Color.parseColor("#ffeeeeee"); // 星期标题背景颜色
+    public static final int COLOR_BG_WEEK_TITLE = Color.parseColor("#33eeeeee"); // 星期标题背景颜色
     public static final int COLOR_TX_WEEK_TITLE = Color.parseColor("#ffcc3333"); // 星期标题文字颜色
     public static final int COLOR_TX_THIS_MONTH_DAY = Color
             .parseColor("#000000"); // 当前月日历数字颜色
@@ -223,6 +226,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
         // 下个月第一天
         int nextMonthDay = 1;
         int lastMonthDay = 1;
+        QueryBuilder query=null;
 
         // 填充每一个空格
         for (int i = 0; i < ROWS_TOTAL; i++) {
@@ -272,10 +276,9 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         dates[0][k] = format(new Date(year, month, lastMonthDay));
                         // 设置日期背景色
                         if (dayBgColorMap.get(dates[0][k]) != null) {
-                            // view.setBackgroundResource(dayBgColorMap
-                            // .get(dates[i][j]));
+                             llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
                         } else {
-                            view.setBackgroundColor(Color.TRANSPARENT);
+                            llview.setBackgroundColor(Color.TRANSPARENT);
                         }
 
 //                        viewNong=new TextView(getContext());
@@ -316,31 +319,38 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         view.setText(Integer.toString(day));
                         view.setTextSize(20);
                         view.setGravity(Gravity.CENTER);
+
+                        viewNong.setText(CalendarUtil.getLunar(calendarday.getYear() + 1900, calendarday.getMonth() + 1, day));
+                        viewNong.setTextColor(COLOR_TX_OTHER_MONTH_DAY);
+                        viewNong.setGravity(Gravity.CENTER);
                         // 当天
                         if (thisday.getDate() == day
                                 && thisday.getMonth() == calendarday.getMonth()
                                 && thisday.getYear() == calendarday.getYear()) {
                             view.setText("今天");
+                            view.setTextColor(Color.RED);
                             view.setTextSize(16);
-                            view.setTextColor(COLOR_TX_WEEK_TITLE);
-                            view.setBackgroundColor(Color.TRANSPARENT);
+                            llview.setBackgroundColor(Color.TRANSPARENT);
                         } else {
                             view.setTextColor(COLOR_TX_THIS_MONTH_DAY);
-                            view.setBackgroundColor(Color.TRANSPARENT);
+                            llview.setBackgroundColor(Color.TRANSPARENT);
                         }
                         // 上面首先设置了一下默认的"当天"背景色，当有特殊需求时，才给当日填充背景色
                         // 设置日期背景色
                         if (dayBgColorMap.get(dates[i][j]) != null) {
-                            view.setTextColor(Color.WHITE);
-                            view.setBackgroundResource(dayBgColorMap
-                                    .get(dates[i][j]));
+                            view.setTextColor(Color.RED);
+                            viewNong.setTextColor(Color.RED);
+                            llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
+                        }else {
+                            llview.setBackgroundColor(Color.TRANSPARENT);
                         }
-
-                        int[] timeData=CalendarUtil.solarToLunar(calendarday.getYear()+1900, calendarday.getMonth()+1, day);
-                        viewNong.setText(CalendarUtil.getLunar(calendarday.getYear()+1900,calendarday.getMonth()+1,day));
-                        viewNong.setTextColor(COLOR_TX_OTHER_MONTH_DAY);
-                        viewNong.setGravity(Gravity.CENTER);
-
+                        query=new QueryBuilder(Note.class)
+                                .where("year = ? and month=? and day=?",
+                                        new String[]{(calendarday.getYear()+1900) + "", (calendarday.getMonth()+1) + "", day + ""});
+                        long number=App.sDb.queryCount(query);
+                        if(number>0){
+                            llview.setBackgroundResource(R.drawable.havenote);
+                        }
                         llview.removeAllViews();
                         llview.addView(view);
                         llview.addView(viewNong);
@@ -366,7 +376,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                             // view.setBackgroundResource(dayBgColorMap
                             // .get(dates[i][j]));
                         } else {
-                            view.setBackgroundColor(Color.TRANSPARENT);
+                            llview.setBackgroundColor(Color.TRANSPARENT);
                         }
 
 //                        viewNong.setText("ddd");
@@ -585,6 +595,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
      * @param color
      */
     public void setCalendarDayBgColor(String date, int color) {
+        dayBgColorMap.clear();
         dayBgColorMap.put(date, color);
         setCalendarDate();
     }

@@ -84,6 +84,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
                         .whereOr("type = ? and month=? and day=?",
                                 new String[]{4 + "", nowMonth + "", nowDay + ""});
                 long number = App.sDb.queryCount(query);
+                normal_title.setText("纪念日/生日");
             } else {
                 query = new QueryBuilder(Note.class)
                         .appendOrderDescBy("year")

@@ -275,16 +275,7 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                         view.setGravity(Gravity.CENTER);
                         dates[0][k] = format(new Date(year, month, lastMonthDay));
                         // 设置日期背景色
-                        if (dayBgColorMap.get(dates[0][k]) != null) {
-                            llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
-                        } else {
-                            llview.setBackgroundColor(Color.TRANSPARENT);
-                        }
-
-//                        viewNong=new TextView(getContext());
-//                        viewNong.setText("ddd");
-//                        viewNong.setTextColor(COLOR_TX_OTHER_MONTH_DAY);
-//                        viewNong.setGravity(Gravity.CENTER);
+                        llview.setBackgroundColor(Color.TRANSPARENT);
 
                         llview.removeAllViews();
                         llview.addView(view);
@@ -355,9 +346,9 @@ public class KCalendar extends ViewFlipper implements GestureDetector.OnGestureL
                             long number = App.sDb.queryCount(query);
 
                             if (number > 0) {
-                                if(dayBgColorMap.get(dates[i][j]) != null){
+                                if (dayBgColorMap.get(dates[i][j]) != null) {
                                     llview.setBackgroundResource(dayBgColorMap.get(dates[i][j]));
-                                }else {
+                                } else {
                                     llview.setBackgroundResource(R.drawable.havenote);
                                 }
                             }

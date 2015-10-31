@@ -54,7 +54,7 @@ public class CountDownActivity extends AppCompatActivity implements CountDownRec
                 .where("type = ?", new String[]{"4"});
         ArrayList<Note> temp2 = App.sDb.query(query);
         temp.addAll(temp2);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
 
         mLayoutManager = new LinearLayoutManager(CountDownActivity.this, LinearLayoutManager.VERTICAL, false);
         mRecyclerViewAdapter = new CountDownRecyclerViewAdapter(CountDownActivity.this);
@@ -83,7 +83,6 @@ public class CountDownActivity extends AppCompatActivity implements CountDownRec
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
         if (requestCode == CountDownActivity.REQUEST && resultCode == RESULT_OK) {
-            System.out.println("onActivityResult");
             resetNote();
         }
     }
@@ -141,7 +140,7 @@ public class CountDownActivity extends AppCompatActivity implements CountDownRec
                 .where("type = ?", new String[]{"4"});
         ArrayList<Note> temp2 = App.sDb.query(query);
         temp.addAll(temp2);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();
         mRecyclerViewAdapter.mDatas.addAll(temp);
         mRecyclerViewAdapter.notifyDataSetChanged();

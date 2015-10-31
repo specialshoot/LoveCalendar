@@ -52,7 +52,7 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
                 .where("type = ?",new String[]{"3"});
 
         ArrayList<Note> temp = App.sDb.query(query);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
 
         mLayoutManager = new LinearLayoutManager(MemorialActivity.this, LinearLayoutManager.VERTICAL, false);
         mRecyclerViewAdapter = new MemorialRecyclerViewAdapter(MemorialActivity.this);
@@ -81,7 +81,6 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
         if (requestCode == MemorialActivity.REQUEST && resultCode == RESULT_OK) {
-            System.out.println("onActivityResult");
             resetNote();
         }
     }
@@ -132,7 +131,7 @@ public class MemorialActivity extends AppCompatActivity implements MemorialRecyc
                 .appendOrderDescBy("day")
                 .where("type = ?",new String[]{"3"});
         ArrayList<Note> temp = App.sDb.query(query);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();
         mRecyclerViewAdapter.mDatas.addAll(temp);
         mRecyclerViewAdapter.notifyDataSetChanged();

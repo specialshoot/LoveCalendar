@@ -272,7 +272,7 @@ public class CreateActivity extends AppCompatActivity {
                         .columns(new String[]{"_id"})
                         .where("title = ?", new String[]{create_title_textview.getText().toString()});
                 long count = App.sDb.queryCount(qb);
-                System.out.println("count : " + count);
+//                System.out.println("count : " + count);
                 if (count > 0 && !isModifyMode) {
                     ToastUtils.showShort(CreateActivity.this, "标题与现存数据重复，请重新命名标题");
                 } else {

@@ -359,14 +359,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
         if (requestCode == REQUSET && resultCode == RESULT_OK) {
-            System.out.println("enter onActivityResult");
             window_calendar.removeAllBgColor();
-            System.out.println("finish RemoveAllBgColor");
             if (null != date) {
                 int years = Integer.parseInt(date.substring(0, date.indexOf("-")));
                 int month = Integer.parseInt(date.substring(date.indexOf("-") + 1, date.lastIndexOf("-")));
                 toolbar.setTitle(years + " 年 " + month + " 月");
-                System.out.println("time : " + year + "/" + month + "/" + day);
                 setSupportActionBar(toolbar);
                 window_calendar.showCalendar(years, month);
                 window_calendar.setCalendarDayBgColor(date, R.drawable.calendar_date_focused);

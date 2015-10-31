@@ -96,7 +96,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
             finish();
         }
         ArrayList<Note> temp = App.sDb.query(query);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
 
         mLayoutManager = new LinearLayoutManager(NormalActivity.this, LinearLayoutManager.VERTICAL, false);
         mRecyclerViewAdapter = new MyRecyclerViewAdapter(NormalActivity.this);
@@ -126,7 +126,6 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
         super.onActivityResult(requestCode, resultCode, data);
         //requestCode标示请求的标示   resultCode表示有数据
         if (requestCode == NormalActivity.REQUEST && resultCode == RESULT_OK) {
-            System.out.println("onActivityResult");
             resetNote();
         }
     }
@@ -193,7 +192,7 @@ public class NormalActivity extends AppCompatActivity implements MyRecyclerViewA
             finish();
         }
         ArrayList<Note> temp = App.sDb.query(query);
-        System.out.println("有" + temp.size() + "条数据");
+//        System.out.println("有" + temp.size() + "条数据");
         mRecyclerViewAdapter.mDatas.clear();
         mRecyclerViewAdapter.mDatas.addAll(temp);
         mRecyclerViewAdapter.notifyDataSetChanged();
